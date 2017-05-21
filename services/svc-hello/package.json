@@ -1,0 +1,55 @@
+{
+  "name": "svc_hello",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "better-npm-run test",
+    "test:watch": "better-npm-run test --watch",
+    "coverage": "better-npm-run coverage",
+    "coverage:serve": "better-npm-run coverage:serve",
+    "lint": "better-npm-run lint",
+    "deploy": "better-npm-run deploy"
+  },
+  "betterScripts": {
+    "test": {
+      "command": "node_modules/mocha/bin/mocha \"./src/**/*.test.js\"",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    },
+    "coverage": {
+      "command": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha \"./src/**/*.test.js\" -- -R spec"
+    },
+    "coverage:serve": {
+      "command": "node_modules/serve/bin/serve.js coverage/lcov-report"
+    },
+    "lint": {
+      "command": "node_modules/.bin/eslint \"./src/**/*.js\""
+    },
+    "deploy": {
+      "command": "npm run lint && npm run test && echo && serverless deploy --function svc_hello"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "better-npm-run": "0.0.15",
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.1",
+    "serve": "^5.1.5",
+    "serverless-plugin-tracing": "^1.0.2",
+    "sinon": "^2.2.0",
+    "sinon-chai": "^2.10.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.53.0",
+    "aws-xray-sdk": "^1.1.1",
+    "aws-xray-sdk-core": "^1.1.1"
+  }
+}
