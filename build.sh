@@ -8,7 +8,7 @@ mkdir -p ${ARTIFACT_DIR}
 
 SERVICES_DIR='services'
 
-buildSplit=(${BUILD_TAG//\//})
+buildSplit=(${BUILD_TAG//\// })
 SERVICE=${buildSplit[0]}
 VERSION=${buildSplit[1]}
 
