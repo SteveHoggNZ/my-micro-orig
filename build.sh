@@ -4,9 +4,10 @@ ARTIFACT_DIR="${PWD}/artifacts"
 
 mkdir -p ${ARTIFACT_DIR}
 
-BUILD_NAME="${BUILD_TAG}"
 SERVICES_DIR='services'
-BUILD_COMMAND='npm i && npm run build && mv .serverless ${ARTIFACT_DIR}/${BUILD_NAME} && ls -al ${ARTIFACT_DIR}/${BUILD_NAME}'
+BUILD_COMMAND='npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}'
+
+zip -r tmp.zip .serverless
 
 cd "${SERVICES_DIR}/${BUILD_TAG}"
 
