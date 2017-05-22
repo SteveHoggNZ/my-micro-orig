@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function join_by { local IFS="$1"; shift; echo "$*"; }
+function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
 
 ARTIFACT_DIR="${PWD}/artifacts"
 
@@ -20,4 +20,4 @@ cd "${SERVICES_DIR}/${SERVICE}"
 
 echo "=== Running Build ==="
 
-eval join_by ' ' "${COMMANDS[@]}"
+eval join_by ' && ' "${COMMANDS[@]}"
