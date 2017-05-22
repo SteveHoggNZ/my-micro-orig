@@ -12,16 +12,20 @@ buildSplit=(${BUILD_TAG//\//})
 SERVICE=${buildSplit[0]}
 VERSION=${buildSplit[1]}
 
+echo "${BUILD_TAG}"
+echo "${SERVICE}"
+echo "${VERSION}"
+
 # COMMANDS=('cd ${SERVICES_DIR}/${SERVICE}'
 #   'npm i'
 #   'npm run build'
 #   'cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}')
 
-BUILD_COMMANDS='cd ${SERVICES_DIR}/${SERVICE} && npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
-
-cd "${SERVICES_DIR}/${SERVICE}"
-
-echo "=== Running Build ==="
-
-# eval $(join_by ' && ' ${COMMANDS[@]})
-eval "${BUILD_COMMANDS}"
+# BUILD_COMMANDS='cd ${SERVICES_DIR}/${SERVICE} && npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
+#
+# cd "${SERVICES_DIR}/${SERVICE}"
+#
+# echo "=== Running Build ==="
+#
+# # eval $(join_by ' && ' ${COMMANDS[@]})
+# eval "${BUILD_COMMANDS}"
