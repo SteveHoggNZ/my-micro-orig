@@ -20,4 +20,4 @@ cd "${SERVICES_DIR}/${SERVICE}"
 
 echo "=== Running Build ==="
 
-eval join_by ' && ' "${COMMANDS[@]}"
+eval $(join_by ' && ' ${COMMANDS[@]})
