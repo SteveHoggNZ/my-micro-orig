@@ -1,16 +1,23 @@
 #!/bin/bash
 
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
 ARTIFACT_DIR="${PWD}/artifacts"
 
 mkdir -p ${ARTIFACT_DIR}
 
 SERVICES_DIR='services'
-BUILD_COMMAND='npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}'
 
-zip -r tmp.zip .serverless
+buildSplit=(${BUILD_TAG//\//})
+SERVICE=${buildSplit[0]}
+VERSION=${buildSplit[1]}
 
-cd "${SERVICES_DIR}/${BUILD_TAG}"
+COMMANDS=('npm i'
+  'npm run build'
+  'cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}')
+
+cd "${SERVICES_DIR}/${SERVICE}"
 
 echo "=== Running Build ==="
 
-eval ${BUILD_COMMAND}
+eval join_by ' ' "${COMMANDS[@]}"
