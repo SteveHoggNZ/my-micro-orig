@@ -28,6 +28,11 @@ const stubs = {
   },
   'aws-sdk': {
     S3: sinon.stub()
+  },
+  // as per http://gyandeeps.com/console-stubbing/
+  '../logging': {
+    info: sinon.spy(),
+    error: sinon.spy()
   }
 }
 
@@ -89,6 +94,8 @@ describe('svc_hello', function() {
     listBuckets.callsArgWith(0, mockBucketListError)
 
     handler.svc_hello({}, {}, (err, result) => {
+      expect(stubs['../logging'].error.callCount)
+        .to.equal(1, 'log.error called once')
       expect(err).to.not.equal(null, 'error value is not null')
       done()
     })

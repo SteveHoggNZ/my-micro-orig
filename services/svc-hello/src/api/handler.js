@@ -3,13 +3,14 @@
 const AWSXRay = require('aws-xray-sdk-core')
 const AWS = AWSXRay.captureAWS(require('aws-sdk'))
 const s3 = new AWS.S3({ signatureVersion: 'v4' })
+const log = require('../logging')
 
 module.exports.svc_hello = (event, context, callback) => {
   s3.listBuckets(function(err, data) {
     let response
 
     if (err) {
-      console.error(err)
+      log.error(err)
       callback('Opps, got an error when listing buckets')
     } else {
       const bucketCount = data.Buckets.length
