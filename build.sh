@@ -17,7 +17,7 @@ VERSION=${buildSplit[1]}
 #   'npm run build'
 #   'cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}')
 
-BUILD_COMMANDS='cd ${SERVICES_DIR}/${SERVICE} && npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
+BUILD_COMMANDS='cd ${PWD}/${SERVICES_DIR}/${SERVICE} && npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
 
 cd "${SERVICES_DIR}/${SERVICE}"
 
