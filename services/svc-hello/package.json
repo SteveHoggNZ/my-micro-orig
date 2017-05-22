@@ -9,6 +9,7 @@
     "coverage": "better-npm-run coverage",
     "coverage:serve": "better-npm-run coverage:serve",
     "lint": "better-npm-run lint",
+    "build": "better-npm-run build",
     "deploy": "better-npm-run deploy"
   },
   "betterScripts": {
@@ -27,8 +28,11 @@
     "lint": {
       "command": "node_modules/.bin/eslint \"./src/**/*.js\""
     },
+    "build": {
+      "command": "npm run lint && npm run test && echo && node_modules/serverless/bin/serverless package"
+    },
     "deploy": {
-      "command": "npm run lint && npm run test && echo && serverless deploy --function svc_hello"
+      "command": "npm run build && echo '--- run deploy here ---'"
     }
   },
   "keywords": [],
@@ -44,6 +48,7 @@
     "mocha": "^3.4.1",
     "proxyquire": "^1.8.0",
     "serve": "^5.1.5",
+    "serverless": "^1.13.2",
     "serverless-plugin-tracing": "^1.0.2",
     "sinon": "^2.2.0",
     "sinon-chai": "^2.10.0"
