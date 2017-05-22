@@ -12,11 +12,12 @@ buildSplit=(${BUILD_TAG//\//})
 SERVICE=${buildSplit[0]}
 VERSION=${buildSplit[1]}
 
-# COMMANDS=('npm i'
+# COMMANDS=('cd ${SERVICES_DIR}/${SERVICE}'
+#   'npm i'
 #   'npm run build'
 #   'cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}')
 
-BUILD_COMMANDS='npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
+BUILD_COMMANDS='cd ${SERVICES_DIR}/${SERVICE} && npm i && npm run build && cp .serverless/* ${ARTIFACT_DIR}/${SERVICE}/${VERSION}'
 
 cd "${SERVICES_DIR}/${SERVICE}"
 
