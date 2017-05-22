@@ -1,13 +1,14 @@
 'use strict'
 
-const sinon = require( 'sinon' )
-const expect = require( 'chai' ).expect
-const AWS = require('aws-sdk')
-const AWSXRay = require('aws-xray-sdk')
+var sinon = require( 'sinon' )
+var proxyquire = require("proxyquire")
+var expect = require( 'chai' ).expect
+// var AWS = require('aws-sdk')
+// var AWSXRay = require('aws-xray-sdk')
+
+proxyquire = proxyquire.noPreserveCache()
 
 // Reference: https://eirikardal.no/stubbing-es2015-classes-with-sinon/
-let listBuckets, s3Stub, captureAWSStub
-
 const mockBucketList = { Buckets: [
   { Name: 'first-bucket',
        CreationDate: '2016-11-28T03:08:53.000Z' },
@@ -19,62 +20,50 @@ const mockBucketListError = {
   stack: [ 'stk1', 'stk2', 'stk3' ]
 }
 
-// === Start stub at global level ===
-// stub modules before require('./handler')
 
-// tell the stub to call the first argument
-listBuckets = sinon
+// === Start Define stubs and include handler module ===
+const stubs = {
+  'aws-xray-sdk-core': {
+    captureAWS: sinon.stub().returnsArg(0)
+  },
+  'aws-sdk': {
+    S3: sinon.stub()
+  }
+}
+
+const listBuckets = sinon
   .stub()
   .callsArgWith(0, null, mockBucketList)
 
-s3Stub = sinon
-  .stub(AWS, 'S3')
-  .returns({ listBuckets })
+// Set the prototype's listBuckets method. This allows stub to be used as a
+// constructor i.e. new AWS.S3
+//
+// The other option is to declare it as a function e.g.
+// S3: function () {
+//   this.listBuckets = listBuckets
+// }
+stubs['aws-sdk'].S3.prototype.listBuckets = listBuckets
 
-captureAWSStub = sinon
-  .stub(AWSXRay, 'captureAWS')
-  .returns(AWS)
-// === End stub at global level ===
+let handler = proxyquire('./handler', stubs)
+// === End Define stubs and include handler module ===
 
-// Handler needs to be required after stubs above
-let handler = require('./handler')
 
 // === Start Root-Level Hooks ===
-// // You can stub at this level, but the "new AWS.S3" invocation needs
-// // to happen in the svc_hello function if you do that otherwise
-// // AWS.S3 is called before it is stubbed
-// before(function() {
-//   listBuckets = sinon
-//    .stub()
-//    .callsArgWith(0, {stack: ['err-stack']}, 'data')
-//
-//   s3Stub = sinon
-//     .stub(AWS, 'S3')
-//     .returns({ listBuckets })
-//
-//   captureAWSStub = sinon
-//     .stub(AWSXRay, 'captureAWS')
-//     .returns(AWS)
-// })
-
 afterEach(function() {
   listBuckets.resetHistory()
 })
-
-after(function() {
-  captureAWSStub.restore()
-  s3Stub.restore()
-})
 // === End Root-Level Hooks ===
+
 
 // === Start Tests ===
 describe('handler load', function() {
   it('should call AWSXRay.captureAWS on load', function(done) {
-    expect(captureAWSStub.callCount).to.equal(1, 'captureAWS called once')
+    expect(stubs['aws-xray-sdk-core'].captureAWS.callCount)
+      .to.equal(1, 'captureAWS called once')
     done()
   })
   it('should call AWS.S3 on load', function(done) {
-    expect(s3Stub.callCount).to.equal(1, 'S3 called once')
+    expect(stubs['aws-sdk'].S3.callCount).to.equal(1, 'S3 called once')
     done()
   })
 })
@@ -82,7 +71,7 @@ describe('handler load', function() {
 describe('svc_hello', function() {
   it('should return expected body and statusCode', function(done) {
     handler.svc_hello({}, {}, (err, result) => {
-      expect(s3Stub.callCount).to.equal(1, 'S3 called once')
+      // expect(s3Stub.callCount).to.equal(1, 'S3 called once')
       expect(listBuckets.callCount).to.equal(1, 'listBuckets called once')
 
       expect(err).to.equal(null, 'error value is null')

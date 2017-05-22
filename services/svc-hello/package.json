@@ -42,6 +42,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.4.1",
+    "proxyquire": "^1.8.0",
     "serve": "^5.1.5",
     "serverless-plugin-tracing": "^1.0.2",
     "sinon": "^2.2.0",
