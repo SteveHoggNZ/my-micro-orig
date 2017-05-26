@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -e
 
 S3_QUEUE_DIR="${PWD}/queue"
 
