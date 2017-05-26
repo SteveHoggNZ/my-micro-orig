@@ -14,7 +14,7 @@ VERSION=${buildSplit[1]}
 
 cd "${SERVICES_DIR}/${SERVICE}"
 
-COPY_COMMANDS='mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
+COPY_COMMANDS='pwd && ls -al && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
 
 echo "=== Running Copy ==="
 
