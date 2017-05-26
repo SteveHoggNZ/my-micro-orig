@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 SERVICES_DIR='services'
 
 buildSplit=(${BUILD_TAG//\// })
