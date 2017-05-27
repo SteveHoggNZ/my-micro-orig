@@ -11,7 +11,7 @@ phases:
     commands:
       - SVC=$(node -p "require('./package.json').name")
       - echo Build for ${SVC} started on `date`
-      - npm build
+      - npm run build
       - mkdir -p package
       - mv .serverless package/${SVC}
   post_build:
