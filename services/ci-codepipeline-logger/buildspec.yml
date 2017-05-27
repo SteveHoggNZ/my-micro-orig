@@ -1,12 +1,9 @@
 version: 0.2
 
-env:
-  variables:
-    NODE_PATH: $NODE_PATH:$PWD/node_modules_dev
-
 phases:
   install:
     commands:
+      - export NODE_PATH=$NODE_PATH:$PWD/node_modules_dev
       - env
       # install dev dependencies
       - npm install --only=dev
