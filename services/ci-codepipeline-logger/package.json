@@ -1,0 +1,25 @@
+{
+  "name": "ci-codepipeline-logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "better-npm-run lint",
+    "lint:fix": "better-npm-run lint --fix",
+    "build": "better-npm-run build"
+  },
+  "betterScripts": {
+    "lint": {
+      "command": "node_modules/.bin/eslint \"*.js\""
+    },
+    "build": {
+      "command": "npm run lint && node_modules/serverless/bin/serverless package"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  }
+}
