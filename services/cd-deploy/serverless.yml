@@ -26,8 +26,10 @@ package:
   - node_modules_dev/**
 
 functions:
-  deploy:
-    handler: handler.deploy
+  # deploy:
+  #   handler: handler.deploy
+  sup:
+    handler: handler.sup
 
 resources:
   Resources:
