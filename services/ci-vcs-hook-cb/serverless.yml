@@ -19,7 +19,7 @@ provider:
   tracing: true
 
   environment:
-    CODE_BUILD_PROJECT: { "Ref": "CodeBuildProject" }
+    CODE_BUILD_PROJECT: ${cf:${self:custom.project_stage}.CodeBuildExtract}
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -48,89 +48,3 @@ functions:
 
 resources:
   Resources:
-    # S3Src:
-    #   Type: AWS::S3::Bucket
-    #   Properties:
-    #     VersioningConfiguration:
-    #       Status: Enabled
-    CodeBuildProject:
-      Type: AWS::CodeBuild::Project
-      DependsOn: CodeBuildProjectRole
-      Properties:
-        Name: "${self:custom.project_stage}"
-        ServiceRole: { "Ref": "CodeBuildProjectRole" }
-        Environment:
-          ComputeType: "BUILD_GENERAL1_SMALL"
-          Image: "aws/codebuild/nodejs:7.0.0"
-          Type: "LINUX_CONTAINER"
-        Source:
-          Type: "GITHUB"
-          Location: "${self:custom.project_svc_url}"
-          BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - bash -x scripts/ci-archive-to-s3.sh\n\nartifacts:\n  files:\n    - queue/**/*\n"
-        Artifacts:
-          Type: "S3"
-          # Get the s3Src export for the my-micro stack for the current stage
-          Location: ${cf:${self:custom.project_stage}.s3Src}
-          Name: "build"
-        TimeoutInMinutes: 5
-    CodeBuildProjectRole:
-      Type: AWS::IAM::Role
-      Properties:
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: Allow
-              Principal:
-                Service:
-                  - codebuild.amazonaws.com
-              Action:
-                - sts:AssumeRole
-        Path: /
-        Policies:
-          -
-            PolicyName: CodeBuildProjectPermissions
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                -
-                  Effect: Allow
-                  Action:
-                    - s3:PutObject
-                  # Resource:
-                  #   - Fn::Join:
-                  #     - ""
-                  #     - - "arn:aws:s3:::"
-                  #       - Ref: "S3Src"
-                  #       - "/*"
-                  Resource:
-                    - Fn::Join:
-                      - ""
-                      - - "arn:aws:s3:::"
-                        - ${cf:${self:custom.project_stage}.s3Src}
-                        - "/*"
-                -
-                  Effect: Allow
-                  Action:
-                    - logs:CreateLogGroup
-                    - logs:CreateLogStream
-                    - logs:PutLogEvents
-                  Resource:
-                    - Fn::Join:
-                      - ""
-                      - - "arn:aws:logs:ap-southeast-2:"
-                        - Ref: "AWS::AccountId"
-                        - ":log-group:/aws/codebuild/"
-                        - "${self:custom.project_stage}"
-                    - Fn::Join:
-                      - ""
-                      - - "arn:aws:logs:ap-southeast-2:"
-                        - Ref: "AWS::AccountId"
-                        - ":log-group:/aws/codebuild/"
-                        - "${self:custom.project_stage}:*"
-  # Outputs:
-  #   S3Src:
-  #     Description: A queue for storing source code to be built
-  #     Value: { Ref: S3Src }
-  #     Export:
-  #       Name: S3Src-cb-${self:provider.stage}

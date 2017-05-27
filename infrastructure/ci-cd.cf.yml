@@ -1,0 +1,172 @@
+Parameters:
+  ProjectName:
+    Type: String
+    Default: my-micro
+  ProjectSvcUrl:
+    Type: String
+    Default: https://github.com/SteveHoggNZ/my-micro.git
+    Description: Enter the URL for the project version control
+  EnvironmentParameter:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Description: Enter dev or prod for environment
+Resources:
+  S3Src:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+  CodeBuildExtract:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: "AWS::StackName"
+            - "extract"
+      ServiceRole: { "Ref": "CodeBuildRole" }
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/nodejs:7.0.0"
+        Type: "LINUX_CONTAINER"
+      Source:
+        Type: "GITHUB"
+        Location:
+          Ref: ProjectSvcUrl
+        BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - bash -x scripts/ci-extract-to-s3.sh\n\nartifacts:\n  files:\n    - queue/**/*\n"
+      Artifacts:
+        Type: "S3"
+        Location:
+          Ref: S3Src
+        Name: "build"
+      TimeoutInMinutes: 5
+  CodeBuildTest:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: "AWS::StackName"
+            - "test"
+      ServiceRole: { "Ref": "CodeBuildRole" }
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/nodejs:7.0.0"
+        Type: "LINUX_CONTAINER"
+      Source:
+        Type: "GITHUB"
+        Location:
+          Ref: ProjectSvcUrl
+        BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - bash -x scripts/ci-unit-test.sh\n\nartifacts:\n  files:\n    - queue/**/*\n"
+      Artifacts:
+        Type: "S3"
+        Location:
+          Ref: S3Src
+        Name: "build"
+      TimeoutInMinutes: 5
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          PolicyName: CodeBuildExtractPermissions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Ref: S3Src
+                      - "/*"
+              -
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:logs:ap-southeast-2:"
+                      - Ref: "AWS::AccountId"
+                      - ":log-group:/aws/codebuild/*"
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:logs:ap-southeast-2:"
+                      - Ref: "AWS::AccountId"
+                      - ":log-group:/aws/codebuild/*:*"
+Outputs:
+  S3Src:
+    Description: A queue for storing source code to be built
+    Value:
+      Ref: S3Src
+    # Export:
+    #   Name:
+    #     Fn::Join:
+    #       - "-"
+    #       - - Ref: "AWS::StackName"
+    #         - "S3Src"
+  CodeBuildExtract:
+    Description: A service to extract code from version control to be built
+    Value:
+      Ref: CodeBuildExtract
+    # Export:
+    #   Name:
+    #     Fn::Join:
+    #       - "-"
+    #       - - Ref: "AWS::StackName"
+    #         - "CodeBuildExtract"
+
+
+
+  # myMicroDeploymentRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         -
+  #           Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - codepipeline.amazonaws.com
+  #           Action:
+  #             - sts:AssumeRole
+  #     Path: /
+  #     Policies:
+  #       -
+  #         PolicyName: myMicroDeploymentPermissions
+  #         PolicyDocument:
+  #           Version: 2012-10-17
+  #           Statement:
+  #             -
+  #               Effect: Allow
+  #               Action:
+  #                 - codedeploy:CreateDeployment
+  #                 - codedeploy:GetApplicationRevision
+  #                 - codedeploy:GetDeployment
+  #                 - codedeploy:GetDeploymentConfig
+  #                 - codedeploy:RegisterApplicationRevision
+  #               Resource: *
+  # myMicroCodePipeline:
+  #   Type: AWS::CodePipeline::Pipeline
+  #   Properties:
+  #     ArtifactStore: !Ref myMicroArtifactStore
