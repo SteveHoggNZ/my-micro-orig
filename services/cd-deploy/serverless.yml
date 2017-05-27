@@ -1,7 +1,8 @@
 service: cd-deploy
 
 custom:
-  project_stage: ${file(../../project.yml):name}-${self:provider.stage}
+  project: my-micro
+  project_stage: ${self:custom.project}-${self:provider.stage}
 
 provider:
   name: aws
@@ -10,7 +11,7 @@ provider:
   timeout: 3
   stage: prod
   stackTags:
-    PROJECT: ${file(../../project.yml):name}
+    PROJECT: ${self:custom.project}
   region: ap-southeast-2
 
   iamRoleStatements:
@@ -70,22 +71,22 @@ resources:
                 OutputArtifacts:
                   - Name: ServiceBuild
                 Configuration:
-                  ProjectName: my-micro-prod-test
+                  ProjectName: my-micro-prod-build
                 RunOrder: '1'
-          - Name: Log
+          - Name: Deploy
             Actions:
               - Name: Log
                 ActionTypeId:
-                  Category: Invoke
+                  Category: Build
                   Owner: AWS
-                  Provider: Lambda
+                  Provider: CodeBuild
                   Version: '1'
                 InputArtifacts:
                   - Name: ServiceBuild
                 OutputArtifacts:
-                  - Name: ServiceLog
+                  - Name: ServiceDeploy
                 Configuration:
-                  FunctionName: ci-codepipeline-logger-prod-log
+                  ProjectName: my-micro-prod-deploy
                 RunOrder: '1'
   Outputs:
     CodePipeline:
