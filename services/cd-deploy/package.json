@@ -1,6 +1,6 @@
 {
   "name": "cd-deploy",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
       "command": "npm run lint && serverless package"
     },
     "deploy": {
-      "command": "serverless deploy --package ./serverless"
+      "command": "ls -al .serverless && serverless deploy --package ./serverless"
     }
   },
   "keywords": [],
