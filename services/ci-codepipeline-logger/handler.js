@@ -1,9 +1,11 @@
 'use strict'
 
+const AWS = require('aws-sdk')
+
 // Reference:
 // http://docs.aws.amazon.com/codepipeline/latest/userguide/actions-invoke-lambda-function.html
 
-module.exports.codepipeline_log = (event, context, callback) => {
+module.exports.log = (event, context, callback) => {
   const codepipeline = new AWS.CodePipeline()
 
   // Retrieve the Job ID from the Lambda action

@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm i
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+      - echo Build started on `date`
+      - npm build
+      - mkdir -p package
+      - mv .serverless package/$(node -p "require('./package.json').name")
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - package/**/*
+  discard-paths: no
