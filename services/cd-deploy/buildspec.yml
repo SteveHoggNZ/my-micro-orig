@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # install dev dependencies so they don't get packaged by Serverless
+      - npm install --only=dev
+      - mv node_modules node_modules_dev
+      - export NODE_PATH=$NODE_PATH:$PWD/node_modules_dev
+      - export PATH=$PATH:$PWD/node_modules_dev/.bin
+      # install production dependencies
+      - npm install --only=production
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+      - SVC=$(node -p "require('./package.json').name")
+      - echo Build for ${SVC} started on `date`
+      - npm run build
+      - mkdir -p package
+      - mv .serverless package/${SVC}
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - package/**/*
+  discard-paths: no
