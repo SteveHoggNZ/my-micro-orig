@@ -19,8 +19,8 @@ phases:
     commands:
       - SVC=$(node -p "require('./package.json').name")
       - echo ${BUILD_ACTION} for ${SVC} started on `date`
-      # - test $BUILD_ACTION == Build && npm run build
-      # - test $BUILD_ACTION == Deploy && && npm run deploy
+      - test $BUILD_ACTION == Build && npm run build
+      - test $BUILD_ACTION == Deploy && && npm run deploy
   post_build:
     commands:
       - echo ${BUILD_ACTION} for ${SVC} completed on `date`
