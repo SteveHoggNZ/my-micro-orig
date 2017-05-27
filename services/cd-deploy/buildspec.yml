@@ -9,8 +9,6 @@ phases:
       - export NODE_PATH=$NODE_PATH:$PWD/node_modules_dev
       - export PATH=$PATH:$PWD/node_modules_dev/.bin
       # install production dependencies
-      # To Do, remove env
-      - env
       - npm install --only=production
   pre_build:
     commands:
@@ -24,6 +22,7 @@ phases:
   post_build:
     commands:
       - rm -fr node_modules # node_modules are only required during build phase
+      - ls -al
       - echo ${BUILD_ACTION} for ${SVC} completed on `date`
 artifacts:
   files:
