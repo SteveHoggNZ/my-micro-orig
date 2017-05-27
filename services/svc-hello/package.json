@@ -1,5 +1,5 @@
 {
-  "name": "svc_hello",
+  "name": "svc-hello",
   "version": "1.0.0",
   "description": "",
   "main": "handler.js",
