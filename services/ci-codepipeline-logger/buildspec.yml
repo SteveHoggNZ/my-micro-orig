@@ -9,10 +9,11 @@ phases:
       - echo Nothing to do in the pre_build phase...
   build:
     commands:
-      - echo Build started on `date`
+      - SVC=$(node -p "require('./package.json').name")
+      - echo Build for ${SVC} started on `date`
       - npm build
       - mkdir -p package
-      - mv .serverless package/$(node -p "require('./package.json').name")
+      - mv .serverless package/${SVC}
   post_build:
     commands:
       - echo Build completed on `date`
