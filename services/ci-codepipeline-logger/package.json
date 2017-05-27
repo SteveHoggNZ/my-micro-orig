@@ -1,6 +1,6 @@
 {
   "name": "ci-codepipeline-logger",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "better-npm-run": "0.0.15",
     "eslint": "^3.19.0"
   }
 }
