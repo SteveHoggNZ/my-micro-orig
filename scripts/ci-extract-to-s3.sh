@@ -14,8 +14,8 @@ VERSION=${buildSplit[1]}
 
 cd "${SERVICES_DIR}/${SERVICE}"
 
-COPY_COMMANDS='pwd && ls -al && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
+EXTRACT_COMMANDS='cp ../../.eslintrc . && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
 
-echo "=== Running Copy ==="
+echo "=== Running Extract ==="
 
-eval "${COPY_COMMANDS}"
+eval "${EXTRACT_COMMANDS}"

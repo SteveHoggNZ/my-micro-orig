@@ -59,7 +59,8 @@ Resources:
         Type: "GITHUB"
         Location:
           Ref: ProjectSvcUrl
-        BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - bash -x scripts/ci-unit-test.sh\n\nartifacts:\n  files:\n    - queue/**/*\n"
+        # replace with build yaml file?
+        BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - npm i && npm run build\n\nartifacts:\n  files:\n    - queue/**/*\n"
       Artifacts:
         Type: "S3"
         Location:
@@ -86,6 +87,14 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
+              -
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                Resource:
+                  - "arn:aws:s3:::codepipeline-ap-southeast-2-*"
               -
                 Effect: Allow
                 Action:
