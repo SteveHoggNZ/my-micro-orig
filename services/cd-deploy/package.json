@@ -1,12 +1,13 @@
 {
   "name": "cd-deploy",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "index.js",
   "scripts": {
     "lint": "better-npm-run lint",
     "lint:fix": "better-npm-run lint --fix",
-    "build": "better-npm-run build"
+    "build": "better-npm-run build",
+    "deploy": "better-npm-run deploy"
   },
   "betterScripts": {
     "lint": {
@@ -14,6 +15,9 @@
     },
     "build": {
       "command": "npm run lint && serverless package"
+    },
+    "deploy": {
+      "command": "echo 'Yay! I can deploy.'"
     }
   },
   "keywords": [],
