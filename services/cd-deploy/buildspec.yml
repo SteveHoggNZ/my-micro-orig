@@ -21,8 +21,11 @@ phases:
       - test $BUILD_ACTION == "Deploy" && npm run deploy
   post_build:
     commands:
-      - rm -fr node_modules # node_modules are only required during build phase
+      # node_modules are only required during build phase
+      - rm -fr node_modules
+      - rm -fr node_modules_dev
       - ls -al
+      - cat /codebuild/output/tmp/script.sh
       - echo ${BUILD_ACTION} for ${SVC} completed on `date`
 artifacts:
   files:
