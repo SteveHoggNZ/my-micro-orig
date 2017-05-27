@@ -6,7 +6,8 @@ phases:
       # install dev dependencies
       - npm install --only=dev
       - mv node_modules node_modules_dev
-      - export PATH=$PATH:node_modules_dev/.bin/
+      - export NODE_PATH=$NODE_PATH:$PWD/node_modules_dev
+      - export PATH=$PATH:$PWD/node_modules_dev/.bin
       - env
       # install non-dev dependencies
       - npm install --only=production
