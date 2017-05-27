@@ -9,6 +9,8 @@ phases:
       - export NODE_PATH=$NODE_PATH:$PWD/node_modules_dev
       - export PATH=$PATH:$PWD/node_modules_dev/.bin
       # install production dependencies
+      # To Do, remove env
+      - env
       - npm install --only=production
   pre_build:
     commands:
