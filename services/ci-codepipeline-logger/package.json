@@ -1,6 +1,6 @@
 {
   "name": "ci-codepipeline-logger",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,7 @@
   "devDependencies": {
     "better-npm-run": "0.0.15",
     "eslint": "^3.19.0",
+    "eslint-plugin-promise": "^3.5.0",
     "serverless": "^1.14.0"
   }
 }
