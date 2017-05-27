@@ -3,8 +3,12 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm i -g serverless
-      - npm i
+      # install dev dependencies
+      - npm install --only=dev
+      - mv node_modules node_modules_dev
+      - ls -al node_modules_dev
+      # install non-dev dependencies
+      - npm install --only=production
   pre_build:
     commands:
       - echo Nothing to do in the pre_build phase...
