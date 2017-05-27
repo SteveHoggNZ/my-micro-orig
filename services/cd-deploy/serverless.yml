@@ -75,7 +75,7 @@ resources:
                 RunOrder: '1'
           - Name: Deploy
             Actions:
-              - Name: Log
+              - Name: Deploy
                 ActionTypeId:
                   Category: Build
                   Owner: AWS
