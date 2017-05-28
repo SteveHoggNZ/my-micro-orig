@@ -40,10 +40,18 @@ package:
   - node_modules_dev/**
 
 functions:
-  prerelease:
-    handler: handler.prerelease
+  pre_release:
+    handler: handler.pre_release
+    events:
+     - http:
+         path: prerelease
+         method: post
   release:
     handler: handler.release
+    events:
+     - http:
+         path: release
+         method: post
 
 resources:
   Resources:
