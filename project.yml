@@ -1,0 +1,4 @@
+name: my-micro
+include:
+  - project.yml
+  - .eslintrc
