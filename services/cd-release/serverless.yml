@@ -40,8 +40,8 @@ package:
   - node_modules_dev/**
 
 functions:
-  pre_release:
-    handler: handler.pre_release
+  prerelease:
+    handler: handler.prerelease
   release:
     handler: handler.release
 

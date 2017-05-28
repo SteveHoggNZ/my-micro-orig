@@ -2,7 +2,7 @@
 
 const AWS = require('aws-sdk')
 
-module.exports.pre_release = (event, context, callback) => {
+module.exports.prerelease = (event, context, callback) => {
   const codepipeline = new AWS.CodePipeline()
 
   // Retrieve the Job ID from the Lambda action
