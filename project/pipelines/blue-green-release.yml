@@ -1,0 +1,67 @@
+# Basic Pipeline
+# This definition relies on variables only available when included in a
+# serverless.yml file e.g. ${self:service}
+CodePipeline:
+  Type: AWS::CodePipeline::Pipeline
+  Properties:
+    Name: ${self:service}-${self:provider.stage}
+    ArtifactStore:
+      Type: S3
+      Location: codepipeline-ap-southeast-2-285005911711
+    # To Do, use globally defined infrastructure role
+    RoleArn: arn:aws:iam::798269391015:role/AWS-CodePipeline-Service
+    Stages:
+      - Name: Source
+        Actions:
+          - Name: Source
+            ActionTypeId:
+              Category: Source
+              Owner: AWS
+              Provider: S3
+              Version: '1'
+            Configuration:
+              S3Bucket: ${cf:${self:custom.project_stage}.S3Src}
+              S3ObjectKey: "build/queue/${self:service}.zip"
+            OutputArtifacts:
+              - Name: ServiceSource
+      - Name: Build
+        Actions:
+          - Name: Build
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: ServiceSource
+            OutputArtifacts:
+              - Name: ServiceBuild
+            Configuration:
+              ProjectName: my-micro-prod-build
+            RunOrder: '1'
+          - Name: Log
+            ActionTypeId:
+              Category: Invoke
+              Owner: AWS
+              Provider: Lambda
+              Version: '1'
+            InputArtifacts:
+              - Name: ServiceSource
+            Configuration:
+              FunctionName: my-micro-cd-release-prod-prerelease
+            RunOrder: '1'
+      - Name: Deploy
+        Actions:
+          - Name: Deploy
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: ServiceBuild
+            OutputArtifacts:
+              - Name: ServiceDeploy
+            Configuration:
+              ProjectName: my-micro-prod-deploy
+            RunOrder: '1'
