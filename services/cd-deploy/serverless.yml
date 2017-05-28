@@ -23,12 +23,13 @@ provider:
   region: ap-southeast-2
   deploymentBucket: ${cf:${self:custom.project_stage}.S3Src}
 
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "codepipeline:PutJobSuccessResult"
-      Resource:
-        - "*"
+# To Do, remove as not needed
+  # iamRoleStatements:
+  #   - Effect: "Allow"
+  #     Action:
+  #       - "codepipeline:PutJobSuccessResult"
+  #     Resource:
+  #       - "*"
 
 package:
   exclude:
