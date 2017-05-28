@@ -9,8 +9,9 @@ custom:
   # Continuous Deployment, otherwise it is in the project directory
   project: ${file(./project/config.yml):name,
               file(../../project/config.yml):name}
-  # Read the service name from package.json
+  # Read the service name and version
   name: ${file(./package.json):name}
+  version: ${file(./package.json):version}
   # Include the pipeline configuration to use
   pipeline: ${file(./project/pipelines/basic.yml):CodePipeline,
               file(../../project/pipelines/basic.yml):CodePipeline}
@@ -28,6 +29,10 @@ provider:
     PROJECT: ${self:custom.project}
   region: ap-southeast-2
   deploymentBucket: ${cf:${self:custom.project_stage}.S3Src}
+  environment:
+    SVC_PROJECT: ${self:custom.project}
+    SVC_NAME: ${self:custom.name}
+    SVC_VERSION: ${self:custom.version}
 
 package:
   exclude:
