@@ -40,7 +40,7 @@ module.exports.sup = (event, context, callback) => {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
-      message: 'sup2',
+      message: 'Sup, 3rd time a charm!!!',
       input: event
     })
   }
