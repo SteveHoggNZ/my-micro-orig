@@ -11,6 +11,7 @@ custom:
   # Define project_stage for accessing shared infrastructure cf stack
   # i.e. project-prod is a stack, project-dev is a stack etc
   project_stage: ${self:custom.project}-${self:provider.stage}
+  pipeline: ${${file(../../pipelines/basic.yml), file(./pipelines/basic.yml}:CodePipeline}
 
 provider:
   name: aws
@@ -39,7 +40,7 @@ resources:
     # Creating a pipeline in the console then describing it is the easiest option
     # to see what needs to be defined i.e.
     # aws codepipeline get-pipeline --name <name>
-    CodePipeline: ${file(./code-pipeline.yml):CodePipeline}
+    CodePipeline: ${self:custom.pipeline}
   Outputs:
     CodePipeline:
       Description: "Code Pipeline for the project"
