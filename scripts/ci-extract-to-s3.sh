@@ -2,7 +2,7 @@
 
 set -e
 
-PROJECT=$(grep ^name: ../project/config.yml | cut -d ' ' -f 2)
+PROJECT=$(grep ^name: ../../project/config.yml | cut -d ' ' -f 2)
 
 S3_QUEUE_DIR="${PWD}/queue"
 
