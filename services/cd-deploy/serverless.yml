@@ -21,6 +21,7 @@ provider:
   stackTags:
     PROJECT: ${self:custom.project}
   region: ap-southeast-2
+  deploymentBucket: ${cf:${self:custom.project_stage}.S3Src}
 
   iamRoleStatements:
     - Effect: "Allow"
