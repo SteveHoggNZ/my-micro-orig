@@ -27,7 +27,7 @@ if [[ "${VERSION}" != "${CHECK_VERSION}" ]]; then
   exit 2
 fi
 
-EXTRACT_COMMANDS='cp ../../.eslintrc . && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
+EXTRACT_COMMANDS='cp ../../.eslintrc . && cp ../../project.yml . && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
 
 echo "=== Running Extract ==="
 
