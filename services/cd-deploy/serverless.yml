@@ -1,7 +1,15 @@
-service: cd-deploy
+# Prefixing the service with the project name means permissions for the
+# deployment resources can be locked down to project* e.g. S3 buckets etc.
+service: ${self:custom.project}-cd-deploy
+
+# To Do: don't have a deployment bucket per service!!!
 
 custom:
-  project: my-micro
+  # The project.yml file will be in the local directory when using
+  # Continuous Deployment, otherwise it is in the project directory
+  project: ${file(./project.yml):name, file(../../project.yml):name}
+  # Define project_stage for accessing shared infrastructure cf stack
+  # i.e. project-prod is a stack, project-dev is a stack etc
   project_stage: ${self:custom.project}-${self:provider.stage}
 
 provider:
@@ -23,6 +31,7 @@ provider:
 
 package:
   exclude:
+  # Dev dependencies are installed here by buildspec.yml
   - node_modules_dev/**
 
 functions:
@@ -39,7 +48,7 @@ resources:
     CodePipeline:
       Type: AWS::CodePipeline::Pipeline
       Properties:
-        Name: ${self:custom.project_stage}-${self:service}
+        Name: ${self:service}-${self:provider.stage}
         ArtifactStore:
           Type: S3
           Location: codepipeline-ap-southeast-2-285005911711
