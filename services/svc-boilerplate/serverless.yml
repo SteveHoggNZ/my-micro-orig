@@ -1,6 +1,6 @@
 # Prefixing the service with the project name means permissions for the
 # deployment resources can be locked down to project* e.g. S3 buckets etc.
-service: ${self:custom.project}-cd-deploy
+service: ${self:custom.project}-svc-boilerplate
 
 # To Do: don't have a deployment bucket per service!!!
 
@@ -33,10 +33,8 @@ package:
   - node_modules_dev/**
 
 functions:
-  # deploy:
-  #   handler: handler.deploy
-  sup:
-    handler: handler.sup
+  boil:
+    handler: handler.boil
 
 resources:
   Resources:
