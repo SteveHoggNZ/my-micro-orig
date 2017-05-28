@@ -39,60 +39,7 @@ resources:
     # Creating a pipeline in the console then describing it is the easiest option
     # to see what needs to be defined i.e.
     # aws codepipeline get-pipeline --name <name>
-    CodePipeline:
-      Type: AWS::CodePipeline::Pipeline
-      Properties:
-        Name: ${self:service}-${self:provider.stage}
-        ArtifactStore:
-          Type: S3
-          Location: codepipeline-ap-southeast-2-285005911711
-        # To Do, use globally defined infrastructure role
-        RoleArn: arn:aws:iam::798269391015:role/AWS-CodePipeline-Service
-        Stages:
-          - Name: Source
-            Actions:
-              - Name: Source
-                ActionTypeId:
-                  Category: Source
-                  Owner: AWS
-                  Provider: S3
-                  Version: '1'
-                Configuration:
-                  S3Bucket: ${cf:${self:custom.project_stage}.S3Src}
-                  # To Do, set the location of the zip as a variable above
-                  S3ObjectKey: "build/queue/cd-deploy.zip"
-                OutputArtifacts:
-                  - Name: ServiceSource
-          - Name: Build
-            Actions:
-              - Name: Build
-                ActionTypeId:
-                  Category: Build
-                  Owner: AWS
-                  Provider: CodeBuild
-                  Version: '1'
-                InputArtifacts:
-                  - Name: ServiceSource
-                OutputArtifacts:
-                  - Name: ServiceBuild
-                Configuration:
-                  ProjectName: my-micro-prod-build
-                RunOrder: '1'
-          - Name: Deploy
-            Actions:
-              - Name: Deploy
-                ActionTypeId:
-                  Category: Build
-                  Owner: AWS
-                  Provider: CodeBuild
-                  Version: '1'
-                InputArtifacts:
-                  - Name: ServiceBuild
-                OutputArtifacts:
-                  - Name: ServiceDeploy
-                Configuration:
-                  ProjectName: my-micro-prod-deploy
-                RunOrder: '1'
+    CodePipeline: ${file(./code-pipeline.yml):CodePipeline}
   Outputs:
     CodePipeline:
       Description: "Code Pipeline for the project"
