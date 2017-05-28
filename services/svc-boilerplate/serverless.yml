@@ -1,6 +1,6 @@
 # Prefixing the service with the project name means permissions for the
 # deployment resources can be locked down to project* e.g. S3 buckets etc.
-service: ${self:custom.project}-svc-boilerplate
+service: ${self:custom.project}-${self:custom.name}
 
 # To Do: don't have a deployment bucket per service!!!
 
@@ -9,6 +9,8 @@ custom:
   # Continuous Deployment, otherwise it is in the project directory
   project: ${file(./project/config.yml):name,
               file(../../project/config.yml):name}
+  # Read the service name from package.json
+  name: ${file(./package.json):name}
   # Include the pipeline configuration to use
   pipeline: ${file(./project/pipelines/basic.yml):CodePipeline,
               file(../../project/pipelines/basic.yml):CodePipeline}
