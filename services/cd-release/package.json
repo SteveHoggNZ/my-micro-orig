@@ -1,0 +1,36 @@
+{
+  "name": "cd-release",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "better-npm-run lint",
+    "lint:fix": "better-npm-run lint --fix",
+    "build": "better-npm-run build",
+    "deploy": "better-npm-run deploy"
+  },
+  "betterScripts": {
+    "lint": {
+      "command": "eslint \"*.js\""
+    },
+    "build": {
+      "command": "npm run lint && serverless package"
+    },
+    "deploy": {
+      "command": "serverless deploy --package ${PWD}/.serverless"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "better-npm-run": "0.0.15",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^3.19.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "serverless": "^1.14.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.58.0"
+  }
+}
