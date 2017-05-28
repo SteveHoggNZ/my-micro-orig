@@ -7,10 +7,11 @@ service: ${self:custom.project}-cd-deploy
 custom:
   # The project.yml file will be in the local directory when using
   # Continuous Deployment, otherwise it is in the project directory
-  project: ${file(./project.yml):name, file(../../project.yml):name}
-  # Set the pipeline configuration to use
-  pipeline: ${file(../../pipelines/basic.yml):CodePipeline,
-              file(./pipelines/basic.yml):CodePipeline}
+  project: ${file(./project/config.yml):name,
+              file(../../project/config.yml):name}
+  # Include the pipeline configuration to use
+  pipeline: ${file(./project/pipelines/basic.yml):CodePipeline,
+              file(../../project/pipelines/basic.yml):CodePipeline}
   # Define project_stage for accessing shared infrastructure cf stack
   # i.e. project-prod is a stack, project-dev is a stack etc
   project_stage: ${self:custom.project}-${self:provider.stage}

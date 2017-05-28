@@ -2,6 +2,8 @@
 
 set -e
 
+PROJECT=$(grep ^name: ../project/config.yml | cut -d ' ' -f 2)
+
 S3_QUEUE_DIR="${PWD}/queue"
 
 mkdir -p ${S3_QUEUE_DIR}
@@ -27,7 +29,8 @@ if [[ "${VERSION}" != "${CHECK_VERSION}" ]]; then
   exit 2
 fi
 
-EXTRACT_COMMANDS='cp ../../.eslintrc . && cp ../../project.yml . && cp -R ../../pipelines . && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
+EXTRACT_COMMANDS='cp ../../.eslintrc . && cp -R ../../project . && zip -r ${S3_QUEUE_DIR}/${PROJECT}-${SERVICE}.zip .'
+# EXTRACT_COMMANDS='cp ../../.eslintrc . && cp -R ../../project . && mkdir -p ${S3_QUEUE_DIR}/${SERVICE}/ && zip -r ${S3_QUEUE_DIR}/${SERVICE}.zip .'
 
 echo "=== Running Extract ==="
 

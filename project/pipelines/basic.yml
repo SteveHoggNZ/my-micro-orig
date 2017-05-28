@@ -1,3 +1,6 @@
+# Basic Pipeline
+# This definition relies on variables only available when included in a
+# serverless.yml file e.g. ${self:service}
 CodePipeline:
   Type: AWS::CodePipeline::Pipeline
   Properties:
@@ -18,8 +21,7 @@ CodePipeline:
               Version: '1'
             Configuration:
               S3Bucket: ${cf:${self:custom.project_stage}.S3Src}
-              # To Do, set the location of the zip as a variable above
-              S3ObjectKey: "build/queue/cd-deploy.zip"
+              S3ObjectKey: "build/queue/${self:service}.zip"
             OutputArtifacts:
               - Name: ServiceSource
       - Name: Build
