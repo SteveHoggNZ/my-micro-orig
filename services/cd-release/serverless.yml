@@ -1,22 +1,12 @@
-# Prefixing the service with the project name means permissions for the
-# deployment resources can be locked down to project* e.g. S3 buckets etc.
 service: ${self:custom.project}-${self:custom.name}
 
-# To Do: don't have a deployment bucket per service!!!
-
 custom:
-  # The project.yml file will be in the local directory when using
-  # Continuous Deployment, otherwise it is in the project directory
   project: ${file(./project/config.yml):name,
               file(../../project/config.yml):name}
-  # Read the service name and version
   name: ${file(./package.json):name}
   version: ${file(./package.json):version}
-  # Include the pipeline configuration to use
-  pipeline: ${file(./project/pipelines/basic.yml):CodePipeline,
-              file(../../project/pipelines/basic.yml):CodePipeline}
-  # Define project_stage for accessing shared infrastructure cf stack
-  # i.e. project-prod is a stack, project-dev is a stack etc
+  pipeline: ${file(./project/pipelines/blue-green-release.yml):CodePipeline,
+              file(../../project/pipelines/blue-green-release.yml):CodePipeline}
   project_stage: ${self:custom.project}-${self:provider.stage}
 
 provider:
@@ -36,7 +26,6 @@ provider:
 
 package:
   exclude:
-  # Dev dependencies are installed here by buildspec.yml
   - node_modules_dev/**
 
 functions:
@@ -47,9 +36,6 @@ functions:
 
 resources:
   Resources:
-    # Creating a pipeline in the console then describing it is the easiest option
-    # to see what needs to be defined i.e.
-    # aws codepipeline get-pipeline --name <name>
     CodePipeline: ${self:custom.pipeline}
   Outputs:
     CodePipeline:
