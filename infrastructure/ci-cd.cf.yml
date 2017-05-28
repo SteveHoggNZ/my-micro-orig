@@ -1,3 +1,4 @@
+# To Do, tag resources with project name
 Parameters:
   ProjectName:
     Type: String
@@ -31,6 +32,10 @@ Resources:
         ComputeType: "BUILD_GENERAL1_SMALL"
         Image: "aws/codebuild/nodejs:7.0.0"
         Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          -
+            Name: BUILD_ACTION
+            Value: extract
       Source:
         Type: "GITHUB"
         Location:
@@ -42,25 +47,54 @@ Resources:
           Ref: S3Src
         Name: "build"
       TimeoutInMinutes: 5
-  CodeBuildTest:
+  CodeBuildBuild:
     Type: AWS::CodeBuild::Project
     Properties:
       Name:
         Fn::Join:
           - "-"
           - - Ref: "AWS::StackName"
-            - "test"
+            - "build"
       ServiceRole: { "Ref": "CodeBuildRole" }
       Environment:
         ComputeType: "BUILD_GENERAL1_SMALL"
         Image: "aws/codebuild/nodejs:7.0.0"
         Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          -
+            Name: BUILD_ACTION
+            Value: build
       Source:
         Type: "GITHUB"
         Location:
           Ref: ProjectSvcUrl
-        # replace with build yaml file?
-        BuildSpec: "version: 0.1\n\nphases:\n  build:\n    commands:\n      - npm i && npm run build\n\nartifacts:\n  files:\n    - queue/**/*\n"
+      Artifacts:
+        Type: "S3"
+        Location:
+          Ref: S3Src
+        Name: "build"
+      TimeoutInMinutes: 5
+  CodeBuildDeploy:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: "AWS::StackName"
+            - "deploy"
+      ServiceRole: { "Ref": "CodeBuildRole" }
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/nodejs:7.0.0"
+        Type: "LINUX_CONTAINER"
+        EnvironmentVariables:
+          -
+            Name: BUILD_ACTION
+            Value: deploy
+      Source:
+        Type: "GITHUB"
+        Location:
+          Ref: ProjectSvcUrl
       Artifacts:
         Type: "S3"
         Location:
@@ -80,10 +114,21 @@ Resources:
                 - codebuild.amazonaws.com
             Action:
               - sts:AssumeRole
+          - # Allow users in the same account to assume the role for debugging
+            Effect: Allow
+            Principal:
+              AWS:
+                - Fn::Join:
+                  - ""
+                  - - "arn:aws:iam::"
+                    - Ref: "AWS::AccountId"
+                    - ":root"
+            Action:
+              - sts:AssumeRole
       Path: /
       Policies:
         -
-          PolicyName: CodeBuildExtractPermissions
+          PolicyName: CodeBuildPermissions
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -95,16 +140,6 @@ Resources:
                   - s3:GetObjectVersion
                 Resource:
                   - "arn:aws:s3:::codepipeline-ap-southeast-2-*"
-              -
-                Effect: Allow
-                Action:
-                  - s3:PutObject
-                Resource:
-                  - Fn::Join:
-                    - ""
-                    - - "arn:aws:s3:::"
-                      - Ref: S3Src
-                      - "/*"
               -
                 Effect: Allow
                 Action:
@@ -122,60 +157,104 @@ Resources:
                     - - "arn:aws:logs:ap-southeast-2:"
                       - Ref: "AWS::AccountId"
                       - ":log-group:/aws/codebuild/*:*"
+        -
+          PolicyName: ServerlessDeployPermissions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:CreateStack
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DeleteStack
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:cloudformation:*:*:stack/"
+                      - Ref: ProjectName
+                      - "-*"
+              -
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:ListBucket
+                  - s3:ListBucketVersions
+                  - s3:ListAllMyBuckets
+                  - s3:GetBucketVersioning
+                  - s3:PutBucketVersioning
+                  - s3:GetBucketLocation
+                  - s3:PutBucketPolicy
+                  - s3:GetBucketWebsite
+                  - s3:PutBucketWebsite
+                  - s3:DeleteBucketWebsite
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Ref: ProjectName
+                      - "-*-serverlessdeployment*"
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Ref: S3Src
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:s3:::"
+                      - Ref: S3Src
+                      - "/*"
+              -
+                Effect: Allow
+                Action:
+                  - lambda:GetFunction
+                  - lambda:CreateFunction
+                  - lambda:DeleteFunction
+                  - lambda:UpdateFunctionConfiguration
+                  - lambda:UpdateFunctionCode
+                  - lambda:ListVersionsByFunction
+                  - lambda:PublishVersion
+                  - lambda:CreateAlias
+                  - lambda:DeleteAlias
+                  - lambda:UpdateAlias
+                  - lambda:GetFunctionConfiguration
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:lambda:*:*:function:"
+                      - Ref: ProjectName
+                      - "-*"
+              -
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:GetRole
+                  - iam:PassRole
+                  - iam:DeleteRolePolicy
+                  - iam:PutRolePolicy
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:iam::"
+                      - Ref: "AWS::AccountId"
+                      - ":role/"
+                      - Ref: ProjectName
+                      - "-*-lambdaRole"
 Outputs:
   S3Src:
     Description: A queue for storing source code to be built
     Value:
       Ref: S3Src
-    # Export:
-    #   Name:
-    #     Fn::Join:
-    #       - "-"
-    #       - - Ref: "AWS::StackName"
-    #         - "S3Src"
   CodeBuildExtract:
     Description: A service to extract code from version control to be built
     Value:
       Ref: CodeBuildExtract
-    # Export:
-    #   Name:
-    #     Fn::Join:
-    #       - "-"
-    #       - - Ref: "AWS::StackName"
-    #         - "CodeBuildExtract"
-
-
-
-  # myMicroDeploymentRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         -
-  #           Effect: Allow
-  #           Principal:
-  #             Service:
-  #               - codepipeline.amazonaws.com
-  #           Action:
-  #             - sts:AssumeRole
-  #     Path: /
-  #     Policies:
-  #       -
-  #         PolicyName: myMicroDeploymentPermissions
-  #         PolicyDocument:
-  #           Version: 2012-10-17
-  #           Statement:
-  #             -
-  #               Effect: Allow
-  #               Action:
-  #                 - codedeploy:CreateDeployment
-  #                 - codedeploy:GetApplicationRevision
-  #                 - codedeploy:GetDeployment
-  #                 - codedeploy:GetDeploymentConfig
-  #                 - codedeploy:RegisterApplicationRevision
-  #               Resource: *
-  # myMicroCodePipeline:
-  #   Type: AWS::CodePipeline::Pipeline
-  #   Properties:
-  #     ArtifactStore: !Ref myMicroArtifactStore
