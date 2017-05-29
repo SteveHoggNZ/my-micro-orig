@@ -61,7 +61,7 @@ module.exports.listStackResources = () => {
 module.exports.makePrerelease = ({
   putJobSuccess = module.exports.putJobSuccess,
   putJobFailure = module.exports.putJobFailure,
-  listFunctions = module.exports.listFunctions
+  listStackResources = module.exports.listStackResources
 } = {}) => ({ jobId, invokeid }) => {
     return listStackResources()
       .then((data) => {
