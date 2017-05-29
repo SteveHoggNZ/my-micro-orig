@@ -47,8 +47,7 @@ CodePipeline:
             InputArtifacts:
               - Name: ServiceSource
             Configuration:
-              FunctionName: ci-codepipeline-logger-prod-log
-              # FunctionName: my-micro-cd-release-prod-prerelease
+              FunctionName: my-micro-cd-release-prod-prerelease
             RunOrder: '1'
       - Name: Deploy
         Actions:
