@@ -48,7 +48,7 @@ CodePipeline:
               - Name: ServiceSource
             Configuration:
               FunctionName: my-micro-cd-release-prod-prerelease
-            RunOrder: '1'
+            RunOrder: '2'
       - Name: Deploy
         Actions:
           - Name: Deploy
@@ -63,4 +63,15 @@ CodePipeline:
               - Name: ServiceDeploy
             Configuration:
               ProjectName: my-micro-prod-deploy
+            RunOrder: '1'
+          - Name: Log
+            ActionTypeId:
+              Category: Invoke
+              Owner: AWS
+              Provider: Lambda
+              Version: '1'
+            InputArtifacts:
+              - Name: ServiceSource
+            Configuration:
+              FunctionName: my-micro-cd-release-prod-prerelease
             RunOrder: '1'
