@@ -288,6 +288,7 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - cloudformation:DeleteStack
+                  - cloudformation:ListImports
                 Resource:
                   - Fn::Join:
                     - ""
