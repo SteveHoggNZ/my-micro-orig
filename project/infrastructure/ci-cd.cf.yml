@@ -434,11 +434,13 @@ Resources:
                 Resource:
                   - !GetAtt CodePipelineRole.Arn
 Outputs:
+  CodePipelineRole:
+    Value:
+      Ref: CodePipelineRole
+  CodeBuildRole:
+    Value:
+      Ref: CodeBuildRole
   S3Src:
     Description: A queue for storing source code to be built
     Value:
       Ref: S3Src
-  CodeBuildExtract:
-    Description: A service to extract code from version control to be built
-    Value:
-      Ref: CodeBuildExtract
