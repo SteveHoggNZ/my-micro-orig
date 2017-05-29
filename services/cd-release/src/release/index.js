@@ -5,7 +5,7 @@ const log = require('../logging')
 
 
 const codepipeline = aws.CodePipeline()
-const lambda = aws.Lambda()
+const cloudformation = aws.CloudFormation()
 
 
 module.exports.putJobSuccess = ({ jobId }) => {
@@ -51,7 +51,7 @@ module.exports.listStackResources = () => {
   }
 
   return new Promise(function(resolve, reject) {
-    lambda.listStackResources(params, function(err, data) {
+    cloudformation.listStackResources(params, function(err, data) {
       if (err) reject(err)
       else resolve(data)
     })

@@ -18,6 +18,7 @@ describe('putJobSuccess', function() {
       '../vendor/aws.js': {
         CodePipeline: sinon.stub()
           .returns({ putJobSuccessResult }),
+        CloudFormation: sinon.stub(),
         Lambda: sinon.stub()
       }
     }

@@ -12,7 +12,7 @@ var aws = proxyquire('./aws', stubs)
 // === Start Tests ===
 describe('vendor/aws', function() {
   it('should export an object with the required keys', function() {
-    const expectedKeys = [ 'CodePipeline', 'Lambda' ]
+    const expectedKeys = [ 'CodePipeline', 'CloudFormation', 'Lambda' ]
     expect(Object.keys(aws)).to.deep.equal(expectedKeys, 'keys match required keys')
   })
 })
