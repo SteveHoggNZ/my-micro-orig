@@ -1,6 +1,7 @@
 'use strict'
 
 var aws = require( '../vendor/aws.js' )
+const log = require('../logging')
 
 
 const codepipeline = aws.CodePipeline()
@@ -61,11 +62,11 @@ module.exports.makePrerelease = ({
 } = {}) => ({ jobId }) => {
     return listFunctions()
       .then((data) => {
-        console.log('LF data', data)
+        log.infor('listFunctions', data)
         return putJobSuccess({ jobId })
       })
       .catch((error) => {
-        console.log('LF error', error)
+        log.error('listFunctions error', error)
         return putJobFailure({ jobId })
       })
   }

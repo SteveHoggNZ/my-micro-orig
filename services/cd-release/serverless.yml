@@ -27,8 +27,13 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "codepipeline:PutJobSuccessResult"
-        - "codepipeline:putJobFailureResult"
+        - codepipeline:PutJobSuccessResult
+        - codepipeline:putJobFailureResult
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - lambda:ListFunctions
       Resource:
         - "*"
 
