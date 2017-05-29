@@ -155,6 +155,6 @@ describe('makePrerelease', function() {
       .makePrerelease({ putJobSuccess, putJobFailure })
     expect(typeof(prerelease)).to.equal('function', 'returns a function')
 
-    prerelease({ jobId: 9 })
+    // prerelease({ jobId: 9 })
   })
 })

@@ -45,7 +45,7 @@ module.exports.putJobFailure = ({ jobId }) => {
 
 module.exports.listFunctions = () => {
   const params = {}
-  
+
   return new Promise(function(resolve, reject) {
     lambda.listFunctions(params, function(err, data) {
       if (err) reject(err)
