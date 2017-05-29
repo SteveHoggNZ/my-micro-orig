@@ -351,6 +351,13 @@ Resources:
                     - - "arn:aws:lambda:*:*:function:"
                       - Ref: ProjectName
                       - "-*"
+              -
+                Effect: Allow
+                Action:
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
+                Resource: "*"
               # To Do: restrict access further
               -
                 Effect: Allow
