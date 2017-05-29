@@ -62,7 +62,7 @@ module.exports.makePrerelease = ({
 } = {}) => ({ jobId }) => {
     return listFunctions()
       .then((data) => {
-        log.infor('listFunctions', data)
+        log.info('listFunctions', data)
         return putJobSuccess({ jobId })
       })
       .catch((error) => {
