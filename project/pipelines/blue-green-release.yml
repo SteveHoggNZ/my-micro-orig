@@ -8,7 +8,7 @@ CodePipeline:
     ArtifactStore:
       Type: S3
       Location: codepipeline-ap-southeast-2-285005911711
-    RoleArn: ${cf:${self:custom.project_stage}.CodePipelineRole}
+    RoleArn: ${cf:${self:custom.project_stage}.CodePipelineRoleArn}
     Stages:
       - Name: Source
         Actions:

@@ -434,12 +434,12 @@ Resources:
                 Resource:
                   - !GetAtt CodePipelineRole.Arn
 Outputs:
-  CodePipelineRole:
+  CodePipelineRoleArn:
     Value:
-      Ref: CodePipelineRole
-  CodeBuildRole:
+      !GetAtt CodePipelineRole.Arn
+  CodeBuildRoleArn:
     Value:
-      Ref: CodeBuildRole
+      !GetAtt CodeBuildRole.Arn
   S3Src:
     Description: A queue for storing source code to be built
     Value:
