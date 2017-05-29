@@ -60,12 +60,12 @@ module.exports.makePrerelease = ({
   listFunctions = module.exports.listFunctions
 } = {}) => ({ jobId }) => {
     return listFunctions()
-      .catch((error) => {
-        console.log('LF error', error)
-        return putJobFailure({ jobId })
-      })
       .then((data) => {
         console.log('LF data', data)
         return putJobSuccess({ jobId })
+      })
+      .catch((error) => {
+        console.log('LF error', error)
+        return putJobFailure({ jobId })
       })
   }
