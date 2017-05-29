@@ -31,12 +31,23 @@ provider:
         - codepipeline:putJobFailureResult
       Resource:
         - "*"
+    # To Do, remove ListFunctions permission
     - Effect: "Allow"
       Action:
         - lambda:ListFunctions
       Resource:
         - "*"
-
+    - Effect: Allow
+      Action:
+        - "cloudformation:*"
+      Resource:
+        - Fn::Join:
+          - ""
+          - - "arn:aws:cloudformation::"
+            - Ref: "AWS::AccountId"
+            - ":stack/"
+            - ${self:service}
+            - "*"
 package:
   exclude:
   - node_modules_dev/**

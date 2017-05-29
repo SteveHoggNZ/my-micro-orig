@@ -45,11 +45,13 @@ module.exports.putJobFailure = ({ jobId, invokeid }) => {
   })
 }
 
-module.exports.listFunctions = () => {
-  const params = {}
+module.exports.listStackResources = () => {
+  const params = {
+    StackName: 'my-micro-cd-release-prod'
+  }
 
   return new Promise(function(resolve, reject) {
-    lambda.listFunctions(params, function(err, data) {
+    lambda.listStackResources(params, function(err, data) {
       if (err) reject(err)
       else resolve(data)
     })
@@ -61,13 +63,14 @@ module.exports.makePrerelease = ({
   putJobFailure = module.exports.putJobFailure,
   listFunctions = module.exports.listFunctions
 } = {}) => ({ jobId, invokeid }) => {
-    return listFunctions()
+    return listStackResources()
       .then((data) => {
-        log.info('listFunctions', data)
-        return putJobSuccess({ jobId })
+        log.info('listStackResources', data)
+        // return putJobSuccess({ jobId })
+        return putJobFailure({ jobId, invokeid })
       })
       .catch((error) => {
-        log.error('listFunctions error', error)
+        log.error('listStackResources error', error)
         return putJobFailure({ jobId, invokeid })
       })
   }

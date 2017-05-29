@@ -99,7 +99,7 @@ describe('putJobFailure', function() {
   })
 })
 
-describe('listFunctions', function() {
+describe('listStackResources', function() {
   let release, stubs
 
   // beforeEach(function () {
