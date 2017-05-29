@@ -19,6 +19,122 @@ Resources:
     Properties:
       VersioningConfiguration:
         Status: Enabled
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          # The default policy CodePipeline generates. It appears very liberal!
+          PolicyName: CodePipelinePermissions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource:
+                  - "arn:aws:s3:::codepipeline*"
+                  - "arn:aws:s3:::elasticbeanstalk*"
+              -
+                Effect: Allow
+                Action:
+                  - codecommit:CancelUploadArchive
+                  - codecommit:GetBranch
+                  - codecommit:GetCommit
+                  - codecommit:GetUploadArchiveStatus
+                  - codecommit:UploadArchive
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - codedeploy:CreateDeployment
+                  - codedeploy:GetApplicationRevision
+                  - codedeploy:GetDeployment
+                  - codedeploy:GetDeploymentConfig
+                  - codedeploy:RegisterApplicationRevision
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - elasticbeanstalk:*
+                  - ec2:*
+                  - elasticloadbalancing:*
+                  - autoscaling:*
+                  - cloudwatch:*
+                  - s3:*
+                  - sns:*
+                  - cloudformation:*
+                  - rds:*
+                  - sqs:*
+                  - ecs:*
+                  - iam:PassRole
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:ListFunctions
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - opsworks:CreateDeployment
+                  - opsworks:DescribeApps
+                  - opsworks:DescribeCommands
+                  - opsworks:DescribeDeployments
+                  - opsworks:DescribeInstances
+                  - opsworks:DescribeStacks
+                  - opsworks:UpdateApp
+                  - opsworks:UpdateStack
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:SetStackPolicy
+                  - cloudformation:ValidateTemplate
+                  - iam:PassRole
+                Resource:
+                  - "*"
+              -
+                Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                Resource:
+                  - "*"
   CodeBuildExtract:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -226,12 +342,50 @@ Resources:
                   - lambda:DeleteAlias
                   - lambda:UpdateAlias
                   - lambda:GetFunctionConfiguration
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
                 Resource:
                   - Fn::Join:
                     - ""
                     - - "arn:aws:lambda:*:*:function:"
                       - Ref: ProjectName
                       - "-*"
+              # To Do: restrict access further
+              -
+                Effect: Allow
+                Action:
+                  - apigateway:GET
+                  - apigateway:HEAD
+                  - apigateway:OPTIONS
+                  - apigateway:PATCH
+                  - apigateway:POST
+                  - apigateway:PUT
+                  - apigateway:DELETE
+                Resource:
+                  - "arn:aws:apigateway:*::/restapis"
+                  - "arn:aws:apigateway:*::/restapis/*"
+              -
+                Effect: Allow
+                Action:
+                  - logs:Describe*
+                Resource:
+                  - "*"
+              # End To Do: restrict access further
+              -
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DeleteLogGroup
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:logs::"
+                      - Ref: "AWS::AccountId"
+                      - ":log-group:/aws/lambda/"
+                      - Ref: ProjectName
+                      - "-*:*"
               -
                 Effect: Allow
                 Action:
@@ -249,6 +403,36 @@ Resources:
                       - ":role/"
                       - Ref: ProjectName
                       - "-*-lambdaRole"
+        -
+          PolicyName: ServerlessPipelinePermissions
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - codepipeline:UpdatePipeline
+                Resource:
+                  - Fn::Join:
+                    - ""
+                    - - "arn:aws:codepipeline:ap-southeast-2:"
+                      - Ref: "AWS::AccountId"
+                      - ":"
+                      - Ref: ProjectName
+                      - "*"
+                  # - Fn::Join:
+                  #   - ""
+                  #   - - "arn:aws:codepipeline::"
+                  #     - Ref: "AWS::AccountId"
+                  #     - ":"
+                  #     - Ref: ProjectName
+                  #     - "*"
+              -
+                Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource:
+                  - !GetAtt CodePipelineRole.Arn
 Outputs:
   S3Src:
     Description: A queue for storing source code to be built

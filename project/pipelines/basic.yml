@@ -8,8 +8,7 @@ CodePipeline:
     ArtifactStore:
       Type: S3
       Location: codepipeline-ap-southeast-2-285005911711
-    # To Do, use globally defined infrastructure role
-    RoleArn: arn:aws:iam::798269391015:role/AWS-CodePipeline-Service
+    RoleArn: ${cf:${self:custom.project_stage}.CodePipelineRole}
     Stages:
       - Name: Source
         Actions:
