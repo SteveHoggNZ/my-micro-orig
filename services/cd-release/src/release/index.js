@@ -44,6 +44,8 @@ module.exports.putJobFailure = ({ jobId }) => {
 }
 
 module.exports.listFunctions = () => {
+  const params = {}
+  
   return new Promise(function(resolve, reject) {
     lambda.listFunctions(params, function(err, data) {
       if (err) reject(err)
@@ -58,6 +60,12 @@ module.exports.makePrerelease = ({
   listFunctions = module.exports.listFunctions
 } = {}) => ({ jobId }) => {
     return listFunctions()
-      .catch((data) => putJobFailure({ jobId }))
-      .then((data) => putJobSuccess({ jobId }))
+      .catch((error) => {
+        console.log('LF error', error)
+        return putJobFailure({ jobId })
+      })
+      .then((data) => {
+        console.log('LF data', data)
+        return putJobSuccess({ jobId })
+      })
   }
