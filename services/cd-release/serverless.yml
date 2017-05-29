@@ -1,5 +1,8 @@
 service: ${self:custom.project}-${self:custom.name}
 
+plugins:
+  - serverless-aws-alias
+
 custom:
   project: ${file(./project/config.yml):name,
               file(../../project/config.yml):name}
