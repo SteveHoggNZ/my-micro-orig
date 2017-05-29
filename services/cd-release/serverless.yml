@@ -1,8 +1,5 @@
 service: ${self:custom.project}-${self:custom.name}
 
-plugins:
-  - serverless-aws-alias
-
 custom:
   project: ${file(./project/config.yml):name,
               file(../../project/config.yml):name}
@@ -31,6 +28,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "codepipeline:PutJobSuccessResult"
+        - "codepipeline:putJobFailureResult"
       Resource:
         - "*"
 
@@ -40,9 +38,9 @@ package:
 
 functions:
   prerelease:
-    handler: handler.prerelease
+    handler: src/api/handler.prerelease
   release:
-    handler: handler.release
+    handler: src/api/handler.release
 
 resources:
   Resources:
