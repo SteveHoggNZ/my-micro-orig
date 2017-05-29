@@ -24,6 +24,13 @@ provider:
     SVC_NAME: ${self:custom.name}
     SVC_VERSION: ${self:custom.version}
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "codepipeline:PutJobSuccessResult"
+      Resource:
+        - "*"
+
 package:
   exclude:
   - node_modules_dev/**
