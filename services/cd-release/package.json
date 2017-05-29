@@ -1,6 +1,6 @@
 {
   "name": "cd-release",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
       "command": "npm run lint && serverless package"
     },
     "deploy": {
-      "command": "serverless deploy --package ${PWD}/.serverless"
+      "command": "serverless deploy --package ${PWD}/.serverless | tee deploy.log"
     }
   },
   "keywords": [],
