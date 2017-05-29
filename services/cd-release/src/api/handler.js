@@ -9,10 +9,11 @@ module.exports.prerelease = (event, context, callback) => {
   log.info('prerelease event', JSON.stringify(event))
 
   const jobId = event["CodePipeline.job"].id
+  const invokeid = context.invokeid
 
   const prerelease = release.makePrerelease()
 
-  prerelease({ jobId })
+  prerelease({ jobId, invokeid })
     .catch((error) => {
       callback(error)
     })

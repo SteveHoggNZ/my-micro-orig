@@ -24,11 +24,12 @@ module.exports.putJobSuccess = ({ jobId }) => {
   })
 }
 
-module.exports.putJobFailure = ({ jobId }) => {
+module.exports.putJobFailure = ({ jobId, invokeid }) => {
   const params = {
     failureDetails: {
       message: 'Release failure',
-      type: 'ConfigurationError'
+      type: 'ConfigurationError',
+      externalExecutionId: invokeid
     },
     jobId: jobId
   }
@@ -59,7 +60,7 @@ module.exports.makePrerelease = ({
   putJobSuccess = module.exports.putJobSuccess,
   putJobFailure = module.exports.putJobFailure,
   listFunctions = module.exports.listFunctions
-} = {}) => ({ jobId }) => {
+} = {}) => ({ jobId, invokeid }) => {
     return listFunctions()
       .then((data) => {
         log.info('listFunctions', data)
@@ -67,6 +68,6 @@ module.exports.makePrerelease = ({
       })
       .catch((error) => {
         log.error('listFunctions error', error)
-        return putJobFailure({ jobId })
+        return putJobFailure({ jobId, invokeid })
       })
   }

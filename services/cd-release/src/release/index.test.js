@@ -69,7 +69,7 @@ describe('putJobFailure', function() {
   it('should return data via a promise', function() {
     putJobFailureResult.callsArgWith(1, null, 'mock-data')
 
-    const pjs = release.putJobFailure({ jobId: 9 })
+    const pjs = release.putJobFailure({ jobId: 9, invokeid: 8 })
 
     expect(typeof(pjs.then)).to.equal('function', 'returns a promise')
     expect(putJobFailureResult.callCount)
@@ -78,7 +78,8 @@ describe('putJobFailure', function() {
       .to.deep.equal({
         failureDetails: {
           message: 'Release failure',
-          type: 'ConfigurationError'
+          type: 'ConfigurationError',
+          externalExecutionId: 8
         },
         jobId: 9
       }, 'putJobFailureResult parameters correct')
