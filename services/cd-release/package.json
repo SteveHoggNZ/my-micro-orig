@@ -25,7 +25,7 @@
       "command": "npm run lint && serverless package"
     },
     "deploy": {
-      "command": "serverless deploy --package ${PWD}/.serverless | tee deploy.log"
+      "command": "serverless deploy --package ${PWD}/.serverless"
     }
   },
   "keywords": [],
